@@ -27,18 +27,6 @@ export default function SignIn() {
         </CardHeader>
         <form className="space-y-4">
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-700 ">
-                Name
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                required
-                className="border-gray-300 focus:border-primary focus:ring-primary"
-              />
-            </div>
             <div className="space-y-1">
               <Label htmlFor="email" className="text-gray-700">
                 Email
@@ -69,7 +57,7 @@ export default function SignIn() {
               type="submit"
               className="w-full bg-primary hover:bg-primary/90"
             >
-              Sign up
+              Sign in
             </Button>
             <p className="text-center text-sm text-gray-600">
               Don&apos;t have an account?{" "}
