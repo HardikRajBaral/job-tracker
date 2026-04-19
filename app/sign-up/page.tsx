@@ -44,7 +44,7 @@ export default function SignUp() {
         router.push("/dashboard");
       }
     } catch (err) {
-      setError("Unexpected error occurred. Please try again.");
+      setError("Unexpected error occurred. Please try again." + err);
     } finally {
       setLoading(false);
     }
