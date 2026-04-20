@@ -27,12 +27,14 @@ export const auth = betterAuth({
   },
 });
 
-export async function getSession() {
+export async function getSession(headersList?: HeadersInit) {
   const result = await auth.api.getSession({
-    headers: await headers(),
+    headers: headersList ?? (await headers()),
   });
+
   return result;
 }
+
 export async function signOut() {
   const result = await auth.api.signOut({
     headers: await headers(),
