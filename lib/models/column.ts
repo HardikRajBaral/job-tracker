@@ -13,7 +13,7 @@ export interface IColumn extends Document {
 const ColumnSchema = new Schema<IColumn>(
   {
     name: {
-      trype: String,
+      type: String,
       required: true,
     },
     boardId: {
@@ -22,13 +22,11 @@ const ColumnSchema = new Schema<IColumn>(
       required: true,
       index: true,
     },
-    order: [
-      {
-        type: Number,
-        required: true,
-        default: 0,
-      },
-    ],
+    order: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     jobApplications: [
       {
         type: Schema.Types.ObjectId,
