@@ -63,6 +63,7 @@ function DropableColumn({
   config: ColConfig;
   boardId: string;
 }) {
+  
   return (
     <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
       <CardHeader
