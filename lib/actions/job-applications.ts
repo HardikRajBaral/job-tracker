@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "../auth/auth";
 import connectDB from "../db";
 import { Board, Column, JobApplication } from "../models";
+import { success } from "better-auth";
 
 interface JobApplicationData {
   company: string;
@@ -81,9 +82,7 @@ export async function createJobApplication(data: JobApplicationData) {
   });
 
   await Column.findByIdAndUpdate(columnId, {
-    $push: {
-      jobApplications: jobApplication._id,
-    },
+    $push: { jobApplications: jobApplication._id },
   });
 
   revalidatePath("/dashboard");
@@ -111,7 +110,7 @@ export async function updateJobApplication(
   if (!session?.user) {
     return { error: "Unauthorized" };
   }
-  const jobApplication = await JobApplication.findOne({ id });
+  const jobApplication = await JobApplication.findById(id);
 
   if (!jobApplication) {
     return { error: "Job application not found" };
@@ -175,16 +174,72 @@ export async function updateJobApplication(
     updatesToApply.columnId = newColumnId;
     updatesToApply.order = newOrderValue;
     await Column.findByIdAndUpdate(newColumnId, {
-      $push: {
-        jobApplications: id,
-      },
+      $push: { jobApplications: id },
     });
-  } else if (order !== undefined || order !== null) {
+  } else if (order !== undefined && order !== null) {
     const otherJobInColumn = await JobApplication.find({
       columnId: currentColumnId,
       _id: { $ne: id },
     })
       .sort({ order: 1 })
       .lean();
+
+    const currentJobOrder = jobApplication.order || 0;
+
+    const currentPositionIndex = otherJobInColumn.findIndex(
+      (job) => job.order > currentJobOrder,
+    );
+    const oldPositionIndex =
+      currentPositionIndex === -1
+        ? otherJobInColumn.length
+        : currentPositionIndex;
+
+    const newOrderValue = order * 100;
+
+    if (order < oldPositionIndex) {
+      const jobToShiftDown = otherJobInColumn.slice(order, oldPositionIndex);
+      for (const job of jobToShiftDown) {
+        await JobApplication.findByIdAndUpdate(job._id, {
+          $set: { order: job.order + 100 },
+        });
+      }
+    } else if (order > oldPositionIndex) {
+      const jobToShiftUp = otherJobInColumn.slice(oldPositionIndex, order);
+      for (const job of jobToShiftUp) {
+        const newOrder = Math.max(0, job.order - 100);
+        await JobApplication.findByIdAndUpdate(job._id, {
+          $set: { order: newOrder },
+        });
+      }
+    }
+    updatesToApply.order = newOrderValue;
   }
+  const update = await JobApplication.findByIdAndUpdate(id, updatesToApply, {
+    new: true,
+  });
+  revalidatePath("/dashboard");
+
+  return { data: JSON.parse(JSON.stringify(update)) };
+}
+
+export async function deleteJobApplication(id: string) {
+  const session = await getSession();
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  const jobApplication = await JobApplication.findById(id);
+
+  if (!jobApplication) {
+    return { error: "Job application not found" };
+  }
+  if (jobApplication.userId.toString() !== session.user.id) {
+    return { error: "Unauthorized" };
+  }
+  await Column.findByIdAndUpdate(jobApplication.columnId, {
+    $pull: { jobApplications: id },
+  });
+  await JobApplication.deleteOne({ _id: id });
+  revalidatePath("/dashboard");
+  return { success: true };
 }
