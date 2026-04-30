@@ -10,6 +10,11 @@ const client = mongooseInstance.connection.getClient();
 const db = client.db();
 
 export const auth = betterAuth({
+  baseURL: {
+    // Resolve auth origin from request host for preview/prod deployments.
+    allowedHosts: ["localhost:3000", "127.0.0.1:3000", "*.vercel.app"],
+    fallback: process.env.BETTER_AUTH_URL,
+  },
   database: mongodbAdapter(db, {
     client,
   }),
