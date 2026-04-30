@@ -10,7 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { deleteJobApplication, updateJobApplication } from "@/lib/actions/job-applications";
+import {
+  deleteJobApplication,
+  updateJobApplication,
+} from "@/lib/actions/job-applications";
 import {
   Dialog,
   DialogContent,
@@ -27,11 +30,13 @@ import { useState } from "react";
 interface JobApplicationCardProps {
   job: JobApplication;
   columns: Column[];
+  dragHandleProps?: React.HTMLAttributes<HTMLElement>;
 }
 
 export default function JobApplicationCard({
   job,
   columns,
+  dragHandleProps,
 }: JobApplicationCardProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -44,18 +49,18 @@ export default function JobApplicationCard({
     tags: job.tags?.join(", ") || "",
     description: job.description,
   });
-    async function handleDelete() {
+  async function handleDelete() {
     try {
-      const result = await deleteJobApplication(job._id)
-      if(result.error){
-        console.log("Failed to delete job application:" , result.error );
+      const result = await deleteJobApplication(job._id);
+      if (result.error) {
+        console.log("Failed to delete job application:", result.error);
       }
     } catch (error) {
       console.error("Failed to move job application:", error);
     }
   }
 
-  async function handleUpdate(e: React.FormEvent ) {
+  async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     try {
       const result = await updateJobApplication(job._id, {
@@ -65,9 +70,8 @@ export default function JobApplicationCard({
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0),
       });
-      if(!result.error){
-        setIsEditing(false)
-
+      if (!result.error) {
+        setIsEditing(false);
       }
     } catch (error) {
       console.error("Failed to move job application:", error);
@@ -85,7 +89,7 @@ export default function JobApplicationCard({
   }
   return (
     <>
-      <Card className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm">
+      <Card className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm" {...dragHandleProps}>
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
@@ -147,7 +151,10 @@ export default function JobApplicationCard({
                         ))}
                     </>
                   )}
-                  <DropdownMenuItem className="text-destructive" onClick={handleDelete}>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={handleDelete}
+                  >
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
