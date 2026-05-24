@@ -1,27 +1,7 @@
 "use client";
 
-import { Board, Column, JobApplication } from "@/lib/models/models.types";
-import {
-  Award,
-  Calendar,
-  CheckCircle2,
-  Mic,
-  MoreVertical,
-  Trash2,
-  XCircle,
-} from "lucide-react";
-import React, { useState } from "react";
-import CreateJobApplicationDialog from "./create-job-application";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import JobApplicationCard from "./job-application-card";
 import useBoard from "@/lib/hooks/useBoards";
+import { Board, Column, JobApplication } from "@/lib/models/models.types";
 import {
   closestCorners,
   DndContext,
@@ -39,7 +19,17 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { set } from "mongoose";
+import {
+  Award,
+  Calendar,
+  CheckCircle2,
+  Mic,
+  XCircle
+} from "lucide-react";
+import React, { useState } from "react";
+import CreateJobApplicationDialog from "./create-job-application";
+import JobApplicationCard from "./job-application-card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface KanbanBoardProps {
   board: Board;
@@ -98,7 +88,7 @@ function DropableColumn({
   return (
     <Card className="min-w-75 shrink-0 shadow-md p-0">
       <CardHeader
-        className={`${config.color} text-white rounded-t-lg pb-3 pt-3`}
+        className={`${config.color} text-white rounded-t-lg pb-3 pt-3 flex items-center justify-center`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
