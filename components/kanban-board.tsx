@@ -88,7 +88,7 @@ function DropableColumn({
   return (
     <Card className="min-w-75 shrink-0 shadow-md p-0">
       <CardHeader
-        className={`${config.color} text-white rounded-t-lg pb-3 pt-3 flex items-center justify-center`}
+        className={`${config.color} text-white  rounded-t-lg pb-3 pt-3`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
